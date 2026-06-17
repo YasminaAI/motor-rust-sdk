@@ -42,6 +42,9 @@ impl PoliciesClient {
     ///
     /// # Arguments
     ///
+    /// * `date_from` - Inclusive lower bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    /// * `date_to` - Inclusive upper bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    /// * `include_aggregates` - When true, includes policy totals, total price, and monthly buckets for the filtered result set.
     /// * `options` - Additional request options such as headers, timeout, etc.
     ///
     /// # Returns
@@ -51,7 +54,7 @@ impl PoliciesClient {
         &self,
         request: &ListPoliciesQueryRequest,
         options: Option<RequestOptions>,
-    ) -> Result<Vec<Policy>, ApiError> {
+    ) -> Result<PaginatedPolicyResponse, ApiError> {
         self.http_client
             .execute_request(
                 Method::GET,
@@ -68,6 +71,9 @@ impl PoliciesClient {
                     .float("min_price", request.min_price.clone())
                     .float("max_price", request.max_price.clone())
                     .int("per_page", request.per_page.clone())
+                    .date("date_from", request.date_from.clone())
+                    .date("date_to", request.date_to.clone())
+                    .bool("include_aggregates", request.include_aggregates.clone())
                     .build(),
                 options,
             )

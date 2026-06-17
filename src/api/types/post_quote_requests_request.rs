@@ -2,6 +2,9 @@ pub use crate::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct PostQuoteRequestsRequest {
+    /// The OTP received by the customer from the Request OTP API
+    #[serde(default)]
+    pub otp: String,
     /// Owner ID must be 10 digits starting with 1, 2, or 7
     #[serde(default)]
     pub owner_id: String,
@@ -15,8 +18,11 @@ pub struct PostQuoteRequestsRequest {
     #[serde(default)]
     pub birthdate: NaiveDate,
     /// Car sequence number must be 8 or 9 digits
-    #[serde(default)]
-    pub car_sequence_number: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub car_sequence_number: Option<String>,
+    /// Custom car number between 1000000 and 9999999999 (for newly imported cars)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_number: Option<String>,
     /// Indicates if the ownership is being transferred
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_ownership_transfer: Option<bool>,
@@ -47,11 +53,13 @@ impl PostQuoteRequestsRequest {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct PostQuoteRequestsRequestBuilder {
+    otp: Option<String>,
     owner_id: Option<String>,
     email: Option<String>,
     phone: Option<String>,
     birthdate: Option<NaiveDate>,
     car_sequence_number: Option<String>,
+    custom_number: Option<String>,
     is_ownership_transfer: Option<bool>,
     current_car_owner_id: Option<String>,
     car_estimated_cost: Option<f64>,
@@ -61,6 +69,11 @@ pub struct PostQuoteRequestsRequestBuilder {
 }
 
 impl PostQuoteRequestsRequestBuilder {
+    pub fn otp(mut self, value: impl Into<String>) -> Self {
+        self.otp = Some(value.into());
+        self
+    }
+
     pub fn owner_id(mut self, value: impl Into<String>) -> Self {
         self.owner_id = Some(value.into());
         self
@@ -83,6 +96,11 @@ impl PostQuoteRequestsRequestBuilder {
 
     pub fn car_sequence_number(mut self, value: impl Into<String>) -> Self {
         self.car_sequence_number = Some(value.into());
+        self
+    }
+
+    pub fn custom_number(mut self, value: impl Into<String>) -> Self {
+        self.custom_number = Some(value.into());
         self
     }
 
@@ -118,13 +136,14 @@ impl PostQuoteRequestsRequestBuilder {
 
     /// Consumes the builder and constructs a [`PostQuoteRequestsRequest`].
     /// This method will fail if any of the following fields are not set:
+    /// - [`otp`](PostQuoteRequestsRequestBuilder::otp)
     /// - [`owner_id`](PostQuoteRequestsRequestBuilder::owner_id)
     /// - [`phone`](PostQuoteRequestsRequestBuilder::phone)
     /// - [`birthdate`](PostQuoteRequestsRequestBuilder::birthdate)
-    /// - [`car_sequence_number`](PostQuoteRequestsRequestBuilder::car_sequence_number)
     /// - [`car_estimated_cost`](PostQuoteRequestsRequestBuilder::car_estimated_cost)
     pub fn build(self) -> Result<PostQuoteRequestsRequest, BuildError> {
         Ok(PostQuoteRequestsRequest {
+            otp: self.otp.ok_or_else(|| BuildError::missing_field("otp"))?,
             owner_id: self
                 .owner_id
                 .ok_or_else(|| BuildError::missing_field("owner_id"))?,
@@ -135,9 +154,8 @@ impl PostQuoteRequestsRequestBuilder {
             birthdate: self
                 .birthdate
                 .ok_or_else(|| BuildError::missing_field("birthdate"))?,
-            car_sequence_number: self
-                .car_sequence_number
-                .ok_or_else(|| BuildError::missing_field("car_sequence_number"))?,
+            car_sequence_number: self.car_sequence_number,
+            custom_number: self.custom_number,
             is_ownership_transfer: self.is_ownership_transfer,
             current_car_owner_id: self.current_car_owner_id,
             car_estimated_cost: self
