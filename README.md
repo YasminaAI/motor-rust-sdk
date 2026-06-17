@@ -1,6 +1,6 @@
 # Yasminaai Rust Library
 
-[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fyasminaai%2Fmotor-rust-sdk)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2FYasminaAI%2Fmotor-rust-sdk)
 [![crates.io shield](https://img.shields.io/crates/v/yasminaai_api)](https://crates.io/crates/yasminaai_api)
 
 The Yasminaai Rust library provides convenient access to the Yasminaai APIs from Rust.
@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yasminaai_api = "0.0.45"
+yasminaai_api = "0.0.47"
 ```
 
 Or install via cargo:
@@ -37,7 +37,7 @@ cargo add yasminaai_api
 
 ## Reference
 
-A full reference for this library is available [here](https://github.com/yasminaai/motor-rust-sdk/blob/HEAD/./reference.md).
+A full reference for this library is available [here](https://github.com/YasminaAI/motor-rust-sdk/blob/HEAD/./reference.md).
 
 ## Usage
 
