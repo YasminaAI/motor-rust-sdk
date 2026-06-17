@@ -2,9 +2,9 @@
   "cliVersion": "5.49.0",
   "generatorName": "fernapi/fern-rust-sdk",
   "generatorVersion": "0.40.6",
-  "originGitCommit": "670d5f7f89b55cdc0efa900b4654c889420149f7",
+  "originGitCommit": "63dfa8c27053d50d0db46746e6a4a64af46f427d",
   "originGitCommitIsDirty": false,
   "invokedBy": "manual",
-  "requestedVersion": "0.0.51",
-  "sdkVersion": "0.0.51"
+  "requestedVersion": "0.0.7",
+  "sdkVersion": "0.0.7"
 }
