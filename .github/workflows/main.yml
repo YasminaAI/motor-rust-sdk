@@ -1,0 +1,26 @@
+name: Publish Rust SDK
+
+on:
+workflow_dispatch:
+  inputs:
+    version:
+      description: "The version of the Rust SDK that you would like to release"
+      required: true
+      type: string
+
+jobs:
+release:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install Fern CLI
+      run: npm install -g fern-api
+
+    - name: Release Rust SDK
+      env:
+        FERN_TOKEN: ${{ secrets.FERN_TOKEN }}
+        CRATES_IO_API_KEY: ${{ secrets.CRATES_IO_API_KEY }}
+      run: |
+        fern generate --group rust-sdk --version ${{ inputs.version }} --log-level debug
