@@ -22,6 +22,9 @@ pub struct Policy {
     pub is_claimed: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
+    /// Timestamp when the provider policy document was attached. For issued motor policies this is the closest available issue/purchase timestamp.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uploaded_at: Option<DateTime<FixedOffset>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub updated_at: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -53,6 +56,7 @@ pub struct PolicyBuilder {
     end_date: Option<String>,
     is_claimed: Option<bool>,
     created_at: Option<String>,
+    uploaded_at: Option<DateTime<FixedOffset>>,
     updated_at: Option<String>,
     client_id: Option<String>,
     canceled_at: Option<String>,
@@ -111,6 +115,11 @@ impl PolicyBuilder {
         self
     }
 
+    pub fn uploaded_at(mut self, value: DateTime<FixedOffset>) -> Self {
+        self.uploaded_at = Some(value);
+        self
+    }
+
     pub fn updated_at(mut self, value: impl Into<String>) -> Self {
         self.updated_at = Some(value.into());
         self
@@ -149,6 +158,7 @@ impl PolicyBuilder {
             end_date: self.end_date,
             is_claimed: self.is_claimed,
             created_at: self.created_at,
+            uploaded_at: self.uploaded_at,
             updated_at: self.updated_at,
             client_id: self.client_id,
             canceled_at: self.canceled_at,

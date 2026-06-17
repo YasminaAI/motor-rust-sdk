@@ -14,6 +14,9 @@ pub struct QuoteResponse {
     /// The car sequence number from 9 digits
     #[serde(skip_serializing_if = "Option::is_none")]
     pub car_sequence_number: Option<i64>,
+    /// Custom car number for newly imported cars (present when `custom_number` was used in the request)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_number: Option<String>,
     /// Whether it was a car transfer or not
     #[serde(skip_serializing_if = "Option::is_none")]
     pub is_ownership_transfer: Option<bool>,
@@ -65,6 +68,7 @@ pub struct QuoteResponseBuilder {
     phone: Option<String>,
     birthdate: Option<NaiveDate>,
     car_sequence_number: Option<i64>,
+    custom_number: Option<String>,
     is_ownership_transfer: Option<bool>,
     car_estimated_cost: Option<f64>,
     car_model_year: Option<i64>,
@@ -95,6 +99,11 @@ impl QuoteResponseBuilder {
 
     pub fn car_sequence_number(mut self, value: i64) -> Self {
         self.car_sequence_number = Some(value);
+        self
+    }
+
+    pub fn custom_number(mut self, value: impl Into<String>) -> Self {
+        self.custom_number = Some(value.into());
         self
     }
 
@@ -155,6 +164,7 @@ impl QuoteResponseBuilder {
             phone: self.phone,
             birthdate: self.birthdate,
             car_sequence_number: self.car_sequence_number,
+            custom_number: self.custom_number,
             is_ownership_transfer: self.is_ownership_transfer,
             car_estimated_cost: self.car_estimated_cost,
             car_model_year: self.car_model_year,

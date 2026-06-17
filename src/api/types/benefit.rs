@@ -8,6 +8,9 @@ pub struct Benefit {
     pub id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    /// Arabic name of the benefit. Use this field instead of `name` when rendering Arabic UIs.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name_ar: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(default)]
     #[serde(with = "crate::core::number_serializers::option")]
@@ -32,6 +35,7 @@ pub struct BenefitBuilder {
     quote_benefit_id: Option<String>,
     id: Option<String>,
     name: Option<String>,
+    name_ar: Option<String>,
     amount: Option<f64>,
     vat: Option<f64>,
     url: Option<String>,
@@ -50,6 +54,11 @@ impl BenefitBuilder {
 
     pub fn name(mut self, value: impl Into<String>) -> Self {
         self.name = Some(value.into());
+        self
+    }
+
+    pub fn name_ar(mut self, value: impl Into<String>) -> Self {
+        self.name_ar = Some(value.into());
         self
     }
 
@@ -74,6 +83,7 @@ impl BenefitBuilder {
             quote_benefit_id: self.quote_benefit_id,
             id: self.id,
             name: self.name,
+            name_ar: self.name_ar,
             amount: self.amount,
             vat: self.vat,
             url: self.url,

@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yasminaai_api = "0.0.29"
+yasminaai_api = "0.0.30"
 ```
 
 Or install via cargo:
@@ -57,12 +57,14 @@ async fn main() {
         .quotes
         .request_quotes(
             &PostQuoteRequestsRequest {
+                otp: "123456".to_string(),
                 owner_id: "owner_id".to_string(),
                 phone: "phone".to_string(),
                 birthdate: NaiveDate::parse_from_str("2023-01-15", "%Y-%m-%d").unwrap(),
-                car_sequence_number: "car_sequence_number".to_string(),
                 car_estimated_cost: 1.1,
                 email: None,
+                car_sequence_number: None,
+                custom_number: None,
                 is_ownership_transfer: None,
                 current_car_owner_id: None,
                 car_model_year: None,
@@ -83,7 +85,7 @@ This SDK allows you to configure different environments for API requests.
 use yasminaai_api::prelude::{*};
 
 let config = ClientConfig {
-    base_url: Environment::Default.url().to_string(),
+    base_url: Environment::Sandbox.url().to_string(),
     ..Default::default()
 };
 let client = Client::new(config).expect("Failed to build client");

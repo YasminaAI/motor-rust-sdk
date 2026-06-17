@@ -1,7 +1,7 @@
 pub use crate::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
-pub struct GetQuoteRequestsResponse {
+pub struct PaginatedQuoteResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub current_page: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -15,7 +15,7 @@ pub struct GetQuoteRequestsResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_page_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub links: Option<Vec<GetQuoteRequestsResponseLinksItem>>,
+    pub links: Option<Vec<PaginationLink>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub next_page_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -28,33 +28,36 @@ pub struct GetQuoteRequestsResponse {
     pub to: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub total: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub aggregates: Option<QuoteRequestAggregates>,
 }
 
-impl GetQuoteRequestsResponse {
-    pub fn builder() -> GetQuoteRequestsResponseBuilder {
-        <GetQuoteRequestsResponseBuilder as Default>::default()
+impl PaginatedQuoteResponse {
+    pub fn builder() -> PaginatedQuoteResponseBuilder {
+        <PaginatedQuoteResponseBuilder as Default>::default()
     }
 }
 
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
-pub struct GetQuoteRequestsResponseBuilder {
+pub struct PaginatedQuoteResponseBuilder {
     current_page: Option<i64>,
     data: Option<Vec<QuoteResponse>>,
     first_page_url: Option<String>,
     from: Option<i64>,
     last_page: Option<i64>,
     last_page_url: Option<String>,
-    links: Option<Vec<GetQuoteRequestsResponseLinksItem>>,
+    links: Option<Vec<PaginationLink>>,
     next_page_url: Option<String>,
     path: Option<String>,
     per_page: Option<i64>,
     prev_page_url: Option<String>,
     to: Option<i64>,
     total: Option<i64>,
+    aggregates: Option<QuoteRequestAggregates>,
 }
 
-impl GetQuoteRequestsResponseBuilder {
+impl PaginatedQuoteResponseBuilder {
     pub fn current_page(mut self, value: i64) -> Self {
         self.current_page = Some(value);
         self
@@ -85,7 +88,7 @@ impl GetQuoteRequestsResponseBuilder {
         self
     }
 
-    pub fn links(mut self, value: Vec<GetQuoteRequestsResponseLinksItem>) -> Self {
+    pub fn links(mut self, value: Vec<PaginationLink>) -> Self {
         self.links = Some(value);
         self
     }
@@ -120,9 +123,14 @@ impl GetQuoteRequestsResponseBuilder {
         self
     }
 
-    /// Consumes the builder and constructs a [`GetQuoteRequestsResponse`].
-    pub fn build(self) -> Result<GetQuoteRequestsResponse, BuildError> {
-        Ok(GetQuoteRequestsResponse {
+    pub fn aggregates(mut self, value: QuoteRequestAggregates) -> Self {
+        self.aggregates = Some(value);
+        self
+    }
+
+    /// Consumes the builder and constructs a [`PaginatedQuoteResponse`].
+    pub fn build(self) -> Result<PaginatedQuoteResponse, BuildError> {
+        Ok(PaginatedQuoteResponse {
             current_page: self.current_page,
             data: self.data,
             first_page_url: self.first_page_url,
@@ -136,6 +144,7 @@ impl GetQuoteRequestsResponseBuilder {
             prev_page_url: self.prev_page_url,
             to: self.to,
             total: self.total,
+            aggregates: self.aggregates,
         })
     }
 }

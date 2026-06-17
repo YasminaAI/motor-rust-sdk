@@ -27,6 +27,15 @@ pub struct ListPoliciesQueryRequest {
     pub max_price: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub per_page: Option<i64>,
+    /// Inclusive lower bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub date_from: Option<NaiveDate>,
+    /// Inclusive upper bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub date_to: Option<NaiveDate>,
+    /// When true, includes policy totals, total price, and monthly buckets for the filtered result set.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub include_aggregates: Option<bool>,
 }
 
 impl ListPoliciesQueryRequest {
@@ -48,6 +57,9 @@ pub struct ListPoliciesQueryRequestBuilder {
     min_price: Option<f64>,
     max_price: Option<f64>,
     per_page: Option<i64>,
+    date_from: Option<NaiveDate>,
+    date_to: Option<NaiveDate>,
+    include_aggregates: Option<bool>,
 }
 
 impl ListPoliciesQueryRequestBuilder {
@@ -101,6 +113,21 @@ impl ListPoliciesQueryRequestBuilder {
         self
     }
 
+    pub fn date_from(mut self, value: NaiveDate) -> Self {
+        self.date_from = Some(value);
+        self
+    }
+
+    pub fn date_to(mut self, value: NaiveDate) -> Self {
+        self.date_to = Some(value);
+        self
+    }
+
+    pub fn include_aggregates(mut self, value: bool) -> Self {
+        self.include_aggregates = Some(value);
+        self
+    }
+
     /// Consumes the builder and constructs a [`ListPoliciesQueryRequest`].
     pub fn build(self) -> Result<ListPoliciesQueryRequest, BuildError> {
         Ok(ListPoliciesQueryRequest {
@@ -114,6 +141,9 @@ impl ListPoliciesQueryRequestBuilder {
             min_price: self.min_price,
             max_price: self.max_price,
             per_page: self.per_page,
+            date_from: self.date_from,
+            date_to: self.date_to,
+            include_aggregates: self.include_aggregates,
         })
     }
 }

@@ -2,6 +2,9 @@ pub use crate::prelude::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct PostPoliciesRequest {
+    /// The OTP received by the customer from the Issue OTP API
+    #[serde(default)]
+    pub otp: String,
     /// ID of the car quote request
     #[serde(default)]
     pub quote_request_id: i64,
@@ -28,6 +31,7 @@ impl PostPoliciesRequest {
 #[derive(Clone, PartialEq, Default, Debug)]
 #[non_exhaustive]
 pub struct PostPoliciesRequestBuilder {
+    otp: Option<String>,
     quote_request_id: Option<i64>,
     quote_reference_id: Option<String>,
     quote_price_id: Option<String>,
@@ -36,6 +40,11 @@ pub struct PostPoliciesRequestBuilder {
 }
 
 impl PostPoliciesRequestBuilder {
+    pub fn otp(mut self, value: impl Into<String>) -> Self {
+        self.otp = Some(value.into());
+        self
+    }
+
     pub fn quote_request_id(mut self, value: i64) -> Self {
         self.quote_request_id = Some(value);
         self
@@ -63,11 +72,13 @@ impl PostPoliciesRequestBuilder {
 
     /// Consumes the builder and constructs a [`PostPoliciesRequest`].
     /// This method will fail if any of the following fields are not set:
+    /// - [`otp`](PostPoliciesRequestBuilder::otp)
     /// - [`quote_request_id`](PostPoliciesRequestBuilder::quote_request_id)
     /// - [`quote_reference_id`](PostPoliciesRequestBuilder::quote_reference_id)
     /// - [`quote_price_id`](PostPoliciesRequestBuilder::quote_price_id)
     pub fn build(self) -> Result<PostPoliciesRequest, BuildError> {
         Ok(PostPoliciesRequest {
+            otp: self.otp.ok_or_else(|| BuildError::missing_field("otp"))?,
             quote_request_id: self
                 .quote_request_id
                 .ok_or_else(|| BuildError::missing_field("quote_request_id"))?,

@@ -1,5 +1,5 @@
 use crate::api::*;
-use crate::{ApiError, ClientConfig, HttpClient, RequestOptions};
+use crate::{ApiError, ClientConfig, HttpClient, QueryBuilder, RequestOptions};
 use reqwest::Method;
 
 pub struct QuotesClient {
@@ -47,10 +47,22 @@ impl QuotesClient {
 
     pub async fn list_quotes(
         &self,
+        request: &ListQuotesQueryRequest,
         options: Option<RequestOptions>,
-    ) -> Result<GetQuoteRequestsResponse, ApiError> {
+    ) -> Result<PaginatedQuoteResponse, ApiError> {
         self.http_client
-            .execute_request(Method::GET, "quote-requests", None, None, options)
+            .execute_request(
+                Method::GET,
+                "quote-requests",
+                None,
+                QueryBuilder::new()
+                    .date("date_from", request.date_from.clone())
+                    .date("date_to", request.date_to.clone())
+                    .int("per_page", request.per_page.clone())
+                    .bool("include_aggregates", request.include_aggregates.clone())
+                    .build(),
+                options,
+            )
             .await
     }
 

@@ -100,7 +100,7 @@ async fn main() {
 </dl>
 </details>
 
-<details><summary><code>client.quotes.<a href="/src/api/resources/quotes/client.rs">list_quotes</a>() -> Result&lt;GetQuoteRequestsResponse, ApiError&gt;</code></summary>
+<details><summary><code>client.quotes.<a href="/src/api/resources/quotes/client.rs">list_quotes</a>(date_from: Option&lt;Option&lt;String&gt;&gt;, date_to: Option&lt;Option&lt;String&gt;&gt;, per_page: Option&lt;Option&lt;i64&gt;&gt;, include_aggregates: Option&lt;Option&lt;bool&gt;&gt;) -> Result&lt;PaginatedQuoteResponse, ApiError&gt;</code></summary>
 <dl>
 <dd>
 
@@ -122,9 +122,60 @@ async fn main() {
         ..Default::default()
     };
     let client = ApiClient::new(config).expect("Failed to build client");
-    client.quotes.list_quotes(None).await;
+    client
+        .quotes
+        .list_quotes(
+            &ListQuotesQueryRequest {
+                date_from: Some(NaiveDate::parse_from_str("2026-06-01", "%Y-%m-%d").unwrap()),
+                date_to: Some(NaiveDate::parse_from_str("2026-06-30", "%Y-%m-%d").unwrap()),
+                per_page: Some(10),
+                include_aggregates: Some(true),
+                ..Default::default()
+            },
+            None,
+        )
+        .await;
 }
 ```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**date_from:** `Option<String>` — Inclusive lower bound for quote request creation date.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**date_to:** `Option<String>` — Inclusive upper bound for quote request creation date.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**per_page:** `Option<i64>` — Number of quote requests to return per page.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include_aggregates:** `Option<bool>` — When true, includes quote request totals and monthly buckets for the filtered result set.
+    
 </dd>
 </dl>
 </dd>
@@ -176,12 +227,14 @@ async fn main() {
         .quotes
         .request_quotes(
             &PostQuoteRequestsRequest {
+                otp: "123456".to_string(),
                 owner_id: "owner_id".to_string(),
                 phone: "phone".to_string(),
                 birthdate: NaiveDate::parse_from_str("2023-01-15", "%Y-%m-%d").unwrap(),
-                car_sequence_number: "car_sequence_number".to_string(),
                 car_estimated_cost: 1.1,
                 email: None,
+                car_sequence_number: None,
+                custom_number: None,
                 is_ownership_transfer: None,
                 current_car_owner_id: None,
                 car_model_year: None,
@@ -202,6 +255,14 @@ async fn main() {
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**otp:** `String` — The OTP received by the customer from the Request OTP API
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
@@ -238,7 +299,15 @@ async fn main() {
 <dl>
 <dd>
 
-**car_sequence_number:** `String` — Car sequence number must be 8 or 9 digits
+**car_sequence_number:** `Option<String>` — Car sequence number must be 8 or 9 digits
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**custom_number:** `Option<String>` — Custom car number between 1000000 and 9999999999 (for newly imported cars)
     
 </dd>
 </dl>
@@ -363,7 +432,7 @@ async fn main() {
 </dl>
 </details>
 
-<details><summary><code>client.policies.<a href="/src/api/resources/policies/client.rs">list_policies</a>(quote_request_id: Option&lt;Option&lt;i64&gt;&gt;, quote_price_id: Option&lt;Option&lt;String&gt;&gt;, provider_policy_id: Option&lt;Option&lt;i64&gt;&gt;, car_sequence_number: Option&lt;Option&lt;String&gt;&gt;, new_owner_id: Option&lt;Option&lt;String&gt;&gt;, previous_owner_id: Option&lt;Option&lt;String&gt;&gt;, status: Option&lt;Option&lt;i64&gt;&gt;, min_price: Option&lt;Option&lt;f64&gt;&gt;, max_price: Option&lt;Option&lt;f64&gt;&gt;, per_page: Option&lt;Option&lt;i64&gt;&gt;) -> Result&lt;Vec&lt;Policy&gt;, ApiError&gt;</code></summary>
+<details><summary><code>client.policies.<a href="/src/api/resources/policies/client.rs">list_policies</a>(quote_request_id: Option&lt;Option&lt;i64&gt;&gt;, quote_price_id: Option&lt;Option&lt;String&gt;&gt;, provider_policy_id: Option&lt;Option&lt;i64&gt;&gt;, car_sequence_number: Option&lt;Option&lt;String&gt;&gt;, new_owner_id: Option&lt;Option&lt;String&gt;&gt;, previous_owner_id: Option&lt;Option&lt;String&gt;&gt;, status: Option&lt;Option&lt;i64&gt;&gt;, min_price: Option&lt;Option&lt;f64&gt;&gt;, max_price: Option&lt;Option&lt;f64&gt;&gt;, per_page: Option&lt;Option&lt;i64&gt;&gt;, date_from: Option&lt;Option&lt;String&gt;&gt;, date_to: Option&lt;Option&lt;String&gt;&gt;, include_aggregates: Option&lt;Option&lt;bool&gt;&gt;) -> Result&lt;PaginatedPolicyResponse, ApiError&gt;</code></summary>
 <dl>
 <dd>
 
@@ -403,6 +472,9 @@ async fn main() {
         .policies
         .list_policies(
             &ListPoliciesQueryRequest {
+                date_from: Some(NaiveDate::parse_from_str("2026-06-01", "%Y-%m-%d").unwrap()),
+                date_to: Some(NaiveDate::parse_from_str("2026-06-30", "%Y-%m-%d").unwrap()),
+                include_aggregates: Some(true),
                 ..Default::default()
             },
             None,
@@ -499,6 +571,30 @@ async fn main() {
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**date_from:** `Option<String>` — Inclusive lower bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**date_to:** `Option<String>` — Inclusive upper bound for the policy date. For issued policies (`status=1`), this filters by `uploaded_at` (the provider policy issue timestamp) and falls back to `created_at` when `uploaded_at` is unavailable. For other statuses, this filters by `created_at`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**include_aggregates:** `Option<bool>` — When true, includes policy totals, total price, and monthly buckets for the filtered result set.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -547,6 +643,7 @@ async fn main() {
         .policies
         .issue_policy(
             &PostPoliciesRequest {
+                otp: "123456".to_string(),
                 quote_request_id: 123,
                 quote_reference_id: "550e8400-e29b-41d4-a716-446655440000".to_string(),
                 quote_price_id: "550e8400-e29b-41d4-a716-446655440001".to_string(),
@@ -567,6 +664,14 @@ async fn main() {
 
 <dl>
 <dd>
+
+<dl>
+<dd>
+
+**otp:** `String` — The OTP received by the customer from the Issue OTP API
+    
+</dd>
+</dl>
 
 <dl>
 <dd>
