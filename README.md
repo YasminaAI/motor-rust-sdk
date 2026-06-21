@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-yasminaai_api = "0.0.86"
+yasminaai_api = "0.1.0"
 ```
 
 Or install via cargo:
